@@ -1,0 +1,19 @@
+{
+  "name": "flashstock-eslint",
+  "version": "0.0.0",
+  "description": "flashstock-eslint =================",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/flashstockinc/flashstock-eslint.git"
+  },
+  "author": "",
+  "license": "",
+  "bugs": {
+    "url": "https://github.com/flashstockinc/flashstock-eslint/issues"
+  },
+  "homepage": "https://github.com/flashstockinc/flashstock-eslint",
+  "private": true
+}
