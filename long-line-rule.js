@@ -50,7 +50,6 @@ function lineFinder(context, source) {
 
 module.exports = function (MAX_LENGTH) {
 	return function (context) {
-		console.log(context.getSource());
 		var linesWarned = {},
 			error = 'Line above ' + MAX_LENGTH + ' characters',
 			finder;
