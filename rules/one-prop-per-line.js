@@ -2,34 +2,53 @@
 
 module.exports = function (context) {
 
-	var error = 'Object literal must be contained in 1 line, or have 1 prop. per line.';
+	var error = 'Object props. must be all contained in 1 line, or be in separate lines.';
 
 	function checkLines(node) {
-		var linesHash = {},
-			length = node.properties.length,
+		var length = node.properties.length,
+			start = node.loc.start.line,
+			end = node.loc.end.line,
+			multiple = false,
 			line,
+			oneLine,
+			repeated,
+			linesHash,
 			i;
 
-		if (node.loc.start.line === node.loc.end.line) {
+		if (start === end) {
 			return;
 		}
 
-		linesHash[node.loc.start.line] = true;
-		linesHash[node.loc.end.line] = true;
+		linesHash = {};
 
 		for (i = 0; i < length; i++) {
 			line = node.properties[i].loc.start.line;
 
-			if (linesHash[line]) {
+			if (line === start || line === end) {
 				context.report(node, error);
 				return;
+			}
+
+			if (linesHash[line]) {
+				repeated = true;
 			} else {
 				linesHash[line] = true;
+			}
+
+			if (!oneLine) {
+				oneLine = line;
+			} else {
+				multiple = line !== oneLine;
+			}
+
+			if (multiple && repeated) {
+				context.report(node, error);
+				return;
 			}
 		}
 	}
 
 	return {
-		ObjectExpression: checkLines,
+		ObjectExpression: checkLines
 	};
 };

@@ -9,13 +9,14 @@ module.exports = function (context) {
 	return {
 		VariableDeclaration: function (node) {
 			var lines = {},
+				length = node.declarations.length,
 				minLine = Number.POSITIVE_INFINITY,
 				maxLine = Number.NEGATIVE_INFINITY,
 				above = false,
 				below = false,
 				i, line, declaration;
 
-			for (i = 0; i < node.declarations.length; i++) {
+			for (i = 0; i < length; i++) {
 				declaration = node.declarations[i];
 				line = declaration.loc.start.line;
 
@@ -38,7 +39,7 @@ module.exports = function (context) {
 
 			if (minLine > maxLine) return;
 
-			for (i = 0; i < node.declarations.length; i++) {
+			for (i = 0; i < length; i++) {
 				declaration = node.declarations[i];
 				line = declaration.loc.start.line;
 
@@ -55,6 +56,6 @@ module.exports = function (context) {
 					}
 				}
 			}
-		},
+		}
 	};
 };
