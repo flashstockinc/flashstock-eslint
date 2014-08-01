@@ -2,7 +2,7 @@
 
 module.exports = function (context) {
 
-	var error = 'Object literal must be contained in 1 line, or have 1 prop. per line';
+	var error = 'Object literal must be contained in 1 line, or have 1 prop. per line.';
 
 	function checkLines(node) {
 		var linesHash = {},

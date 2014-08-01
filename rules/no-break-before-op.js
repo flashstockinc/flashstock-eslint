@@ -2,7 +2,7 @@
 
 module.exports = function (context) {
 
-	var error = 'Lines must be broken after binary operators',
+	var error = 'Lines must be broken after binary operators.',
 		lines = {};
 
 	function checkOperators(node) {

@@ -2,7 +2,7 @@
 
 module.exports = function (context) {
 
-	var error = 'There should be a space between ) and {',
+	var error = 'There should be a space between ) and {.',
 		BLOCKS = {
 			'FunctionDeclaration': 'body',
 			'FunctionExpression': 'body',

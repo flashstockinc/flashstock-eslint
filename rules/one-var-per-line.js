@@ -2,9 +2,9 @@
 
 module.exports = function (context) {
 
-	var multipleError = 'Multiple variable initializations per line',
+	var multipleError = 'Multiple variable initializations per line.',
 		groupError = 'Uninitialized vars must be grouped at the top ' +
-			'or bottom of the declaration';
+			'or bottom of the declaration.';
 
 	return {
 		VariableDeclaration: function (node) {

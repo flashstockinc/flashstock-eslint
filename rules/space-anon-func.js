@@ -2,7 +2,7 @@
 
 module.exports = function (context) {
 
-	var error = 'Missing space between \'function\' and (';
+	var error = 'Missing space between \'function\' and (.';
 
 	function checkBracketSpacing(node) {
 		var match;

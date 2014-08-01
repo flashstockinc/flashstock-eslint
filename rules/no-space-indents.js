@@ -2,28 +2,25 @@
 
 module.exports = function (context) {
 
-	var error = 'General: using spaces for indentation near {{lines}}';
-
+	var error = 'Using spaces for indentation.',
+		regex = /^\t* +/;
 
 	return {
-		'Program': function (node) {
-			var source = context.getSource(node),
-				lines,
-				wrongLines;
+		Program: function (node) {
+			var lines = context.getSourceLines(),
+				length = lines.length,
+				match,
+				i;
 
-			if (source.match(/^\t* +\t*/m)) {
-				lines = source.split('\n');
-				wrongLines = [];
+			for (i = 0; i < length; i++) {
+				match = regex.exec(lines[i]);
 
-				lines.forEach(function (line, i) {
-					if (line.match(/^\t* +\t*/)) {
-						wrongLines.push(i);
-					}
-				});
-
-				context.report(node, error, {
-					lines: wrongLines.join(',')
-				});
+				if (match) {
+					context.report(node, {
+						line: i + 1,
+						column: match.index + 1
+					}, error);
+				}
 			}
 		}
 	};
