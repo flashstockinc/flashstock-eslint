@@ -2,8 +2,17 @@
 
 module.exports = function (context) {
 
-	var error = 'Using spaces for indentation.',
-		regex = /^\t* +/;
+	var mode = (context.options && context.options[0]) || 'tabs',
+		config = {
+			spaces: {
+				error: 'Using tabs for indentation',
+				regex: /^ *\t+/
+			},
+			tabs: {
+				error: 'Using spaces for indentation',
+				regex: /^\t* +/
+			}
+		}[mode];
 
 	return {
 		Program: function (node) {
@@ -13,13 +22,13 @@ module.exports = function (context) {
 				i;
 
 			for (i = 0; i < length; i++) {
-				match = regex.exec(lines[i]);
+				match = config.regex.exec(lines[i]);
 
 				if (match) {
 					context.report(node, {
 						line: i + 1,
 						column: match.index + 1
-					}, error);
+					}, config.error);
 				}
 			}
 		}

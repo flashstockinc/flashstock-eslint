@@ -12,7 +12,7 @@ module.exports = function (context) {
 			'ForInStatement': 'body',
 			'ForOfStatement': 'body',
 			'CatchClause': 'body',
-		}
+		};
 
 	function checkBracketSpacing(node) {
 		var source = context.getSource(node),
