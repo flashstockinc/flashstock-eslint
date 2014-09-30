@@ -1,110 +1,68 @@
-'use strict';
+/*
+	Based on max-len.js in ESLint
+	Original copyright notice:
+		@author Matt DuVall <http://www.mattduvall.com>
+		@copyright 2013 Matt DuVall. All rights reserved.
+*/
 
-function lineFinder(context, source) {
-	var lines = source.split('\n'),
-		MAX_ITERATIONS = 1024 * 1024;
+//------------------------------------------------------------------------------
+// Rule Definition
+//------------------------------------------------------------------------------
 
-	return function (node) {
-		var prev = 0,
-			following = 0,
-			nodeSrc = context.getSource(node, prev, following),
-			firstFind = source.indexOf(nodeSrc),
-			lastFind = source.lastIndexOf(nodeSrc),
-			counter = 0,
-			line = 0;
+function rule(context) {
 
-		while (firstFind !== lastFind) {
-			counter++;
-			prev++;
-			following++;
-
-			nodeSrc = context.getSource(node, prev, following);
-			firstFind = source.indexOf(nodeSrc);
-			lastFind = source.lastIndexOf(nodeSrc);
-
-			if (counter === MAX_ITERATIONS) {
-				return null;
+	/**
+	* Creates a string that is made up of repeating a given string a certain
+	* number of times. This uses exponentiation of squares to achieve significant
+	* performance gains over the more traditional implementation of such
+	* functionality.
+	* @param {string} str The string to repeat.
+	* @param {int} num The number of times to repeat the string.
+	* @returns {string} The created string.
+	* @private
+	*/
+	function stringRepeat(str, num) {
+		var result = '';
+		for (num |= 0; num > 0; num >>>= 1, str += str) {
+			if (num & 1) {
+				result += str;
 			}
 		}
+		return result;
+	}
 
-		firstFind = firstFind + prev;
-		counter = 0;
+	var tabWidth = context.options[1];
 
-		while (firstFind > lines[line].length) {
-			firstFind -= lines[line].length;
-			firstFind--;
-			line++;
-			counter++;
+	var maxLength = context.options[0],
+		tabString = stringRepeat(' ', tabWidth);
 
-			if (counter === MAX_ITERATIONS) {
-				return null;
+	//--------------------------------------------------------------------------
+	// Helpers
+	//--------------------------------------------------------------------------
+	function checkProgramForMaxLength(node) {
+		var lines = context.getSourceLines();
+
+		// Replace the tabs
+		// Split (honors line-ending)
+		// Iterate
+		lines.forEach(function(line, i){
+			if (line.replace(/\t/g, tabString).length > maxLength) {
+				context.report(node, { line: i + 1, col: 1 },
+					'Line ' + (i + 1) + ' exceeds the maximum line length of ' + maxLength + '.'
+				);
 			}
-		}
+		});
+	}
 
-		return {
-			text: lines[line],
-			number: line 
-		};
+
+	//--------------------------------------------------------------------------
+	// Public API
+	//--------------------------------------------------------------------------
+
+	return {
+		'Program': checkProgramForMaxLength
 	};
-};
 
-module.exports = function (MAX_LENGTH) {
-	return function (context) {
-		var linesWarned = {},
-			error = 'Line above ' + MAX_LENGTH + ' characters.',
-			finder;
-
-		function checkLongLine(node) {
-			var line = finder(node),
-				length = lengthWithTabs(line.text);
-
-			if (length > MAX_LENGTH && !linesWarned[line.number]) {
-				linesWarned[line.number] = true;
-				context.report(node, error);
-			}
-		}
-
-		function lengthWithTabs(line) {
-			var length = line.length,
-				i = 0;
-
-			while (line[i] === '\t') {
-				length++;
-				i++;
-			}
-
-			return length;
-		}
-
-		return {
-			Program: function () {
-				finder = lineFinder(context, context.getSource())
-			},
-			Statement: checkLongLine,
-			EmptyStatement: checkLongLine,
-			BlockStatement: checkLongLine,
-			ExpressionStatement: checkLongLine,
-			IfStatement: checkLongLine,
-			LabeledStatement: checkLongLine,
-			BreakStatement: checkLongLine,
-			ContinueStatement: checkLongLine,
-			WithStatement: checkLongLine,
-			SwitchStatement: checkLongLine,
-			ReturnStatement: checkLongLine,
-			ThrowStatement: checkLongLine,
-			TryStatement: checkLongLine,
-			WhileStatement: checkLongLine,
-			DoWhileStatement: checkLongLine,
-			ForStatement: checkLongLine,
-			ForInStatement: checkLongLine,
-			ForOfStatement: checkLongLine,
-			LetStatement: checkLongLine,
-			DebuggerStatement: checkLongLine,
-			Declaration: checkLongLine,
-			FunctionDeclaration: checkLongLine,
-			VariableDeclaration: checkLongLine,
-			VariableDeclarator: checkLongLine,
-		};
-
-	};
 }
+
+module.exports = rule;
